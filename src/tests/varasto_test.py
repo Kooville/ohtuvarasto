@@ -43,7 +43,7 @@ class TestVarasto(unittest.TestCase):
         v = Varasto(-1, 5)
         self.assertEqual(v.tilavuus, 0.0)
         # alku_saldo > tilavuus (tilavuus was set to 0.0) -> saldo should be tilavuus (0.0)
-        self.assertEqual(v.saldo, 0.1)
+        self.assertEqual(v.saldo, 0.0)
 
     def test_konstruktori_negatiivinen_alkusaldo_nollataan(self):
         v = Varasto(10, -5)
