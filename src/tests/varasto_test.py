@@ -81,7 +81,8 @@ class TestVarasto(unittest.TestCase):
     def test_str_palauttaa_odotetun_muodon(self):
         v = Varasto(8, 3)
         # expected: "saldo = 3, vielä tilaa 5"
-        self.assertEqual(str(v), f"saldo = {v.saldo}, vielä tilaa {v.paljonko_mahtuu()}")
+        self.assertEqual(
+            str(v), f"saldo = {v.saldo}, vielä tilaa {v.paljonko_mahtuu()}")
 
     def test_alkusaldo_tarkka_yhtasuuruus_mahtuu(self):
         v = Varasto(4, 4)  # alku_saldo == tilavuus uses elif-path
