@@ -1,5 +1,6 @@
 name: CI
 
+
 on:
   push:
     branches: [main]
@@ -22,6 +23,8 @@ jobs:
         run: poetry run coverage run --branch -m pytest
       - name: Coverage report
         run: poetry run coverage xml
+      - name: Pylint test
+        run: poetry run pylint src
       - name: Coverage report to Codecov
         uses: codecov/codecov-action@v5
         env:
