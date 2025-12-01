@@ -6,6 +6,14 @@ from varasto import Varasto
 app = Flask(__name__)
 
 
+def safe_float(value, default=0.0):
+    """Safely convert value to float, returning default if conversion fails."""
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
 class WarehouseStore:
     """Manages warehouse storage and ID generation."""
 
@@ -51,8 +59,8 @@ def create_warehouse():
     """Create a new warehouse."""
     if request.method == 'POST':
         name = request.form.get('name', 'Unnamed')
-        tilavuus = float(request.form.get('tilavuus', 100))
-        alku_saldo = float(request.form.get('alku_saldo', 0))
+        tilavuus = safe_float(request.form.get('tilavuus'), 100)
+        alku_saldo = safe_float(request.form.get('alku_saldo'), 0)
 
         warehouse_id = store.get_next_id()
         store.add({
@@ -82,15 +90,10 @@ def edit_warehouse(warehouse_id):
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        name = request.form.get('name', warehouse['name'])
-        default_tilavuus = warehouse['varasto'].tilavuus
-        new_tilavuus = float(request.form.get('tilavuus', default_tilavuus))
-
-        warehouse['name'] = name
-        # Update capacity if changed (reset saldo if capacity is smaller)
-        old_saldo = warehouse['varasto'].saldo
-        warehouse['varasto'] = Varasto(new_tilavuus, old_saldo)
-
+        warehouse['name'] = request.form.get('name', warehouse['name'])
+        tilavuus_form = request.form.get('tilavuus')
+        new_tilavuus = safe_float(tilavuus_form, warehouse['varasto'].tilavuus)
+        warehouse['varasto'] = Varasto(new_tilavuus, warehouse['varasto'].saldo)
         return redirect(url_for('view_warehouse', warehouse_id=warehouse_id))
 
     return render_template('edit_warehouse.html', warehouse=warehouse)
@@ -101,7 +104,7 @@ def add_to_warehouse(warehouse_id):
     """Add items to a warehouse."""
     warehouse = store.get(warehouse_id)
     if warehouse:
-        amount = float(request.form.get('amount', 0))
+        amount = safe_float(request.form.get('amount'), 0)
         warehouse['varasto'].lisaa_varastoon(amount)
     return redirect(url_for('view_warehouse', warehouse_id=warehouse_id))
 
@@ -111,7 +114,7 @@ def remove_from_warehouse(warehouse_id):
     """Remove items from a warehouse."""
     warehouse = store.get(warehouse_id)
     if warehouse:
-        amount = float(request.form.get('amount', 0))
+        amount = safe_float(request.form.get('amount'), 0)
         warehouse['varasto'].ota_varastosta(amount)
     return redirect(url_for('view_warehouse', warehouse_id=warehouse_id))
 
@@ -124,4 +127,4 @@ def delete_warehouse(warehouse_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

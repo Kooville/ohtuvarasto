@@ -1,6 +1,6 @@
 """Tests for the Flask web application."""
 import unittest
-from app import app, store
+from app import app, store, safe_float
 
 
 class TestFlaskApp(unittest.TestCase):
@@ -214,3 +214,31 @@ class TestWarehouseStore(unittest.TestCase):
         store.add({'id': 2, 'name': 'B'})
         all_warehouses = store.all()
         self.assertEqual(len(all_warehouses), 2)
+
+
+class TestSafeFloat(unittest.TestCase):
+    """Test cases for the safe_float helper function."""
+
+    def test_valid_float(self):
+        """Test with valid float string."""
+        self.assertEqual(safe_float('10.5'), 10.5)
+
+    def test_valid_integer(self):
+        """Test with valid integer string."""
+        self.assertEqual(safe_float('42'), 42.0)
+
+    def test_invalid_string(self):
+        """Test with invalid string returns default."""
+        self.assertEqual(safe_float('invalid'), 0.0)
+
+    def test_none_value(self):
+        """Test with None value returns default."""
+        self.assertEqual(safe_float(None), 0.0)
+
+    def test_custom_default(self):
+        """Test with custom default value."""
+        self.assertEqual(safe_float('invalid', 100.0), 100.0)
+
+    def test_empty_string(self):
+        """Test with empty string returns default."""
+        self.assertEqual(safe_float(''), 0.0)
