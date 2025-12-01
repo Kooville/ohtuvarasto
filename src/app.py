@@ -106,7 +106,7 @@ def add_to_warehouse(warehouse_id):
     if warehouse:
         amount = safe_float(request.form.get('amount'), 0)
         warehouse['varasto'].lisaa_varastoon(amount)
-    return redirect(url_for('view_warehouse', warehouse_id=warehouse_id))
+    return redirect(url_for('index'))
 
 
 @app.route('/warehouse/<int:warehouse_id>/remove', methods=['POST'])
